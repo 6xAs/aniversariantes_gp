@@ -1,11 +1,26 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
-import locale
-locale.setlocale(locale.LC_TIME, "pt_BR.utf8")
-
 
 st.set_page_config(page_title="Aniversariantes do GP", page_icon="🎉", layout="wide")
+
+# -------------------------
+# Dicionário para meses em português
+# -------------------------
+MESES_PT = {
+    "January": "Janeiro",
+    "February": "Fevereiro",
+    "March": "Março",
+    "April": "Abril",
+    "May": "Maio",
+    "June": "Junho",
+    "July": "Julho",
+    "August": "Agosto",
+    "September": "Setembro",
+    "October": "Outubro",
+    "November": "Novembro",
+    "December": "Dezembro",
+}
 
 # Gerar avatar com base no nome da pessoa
 def gerar_avatar(nome):
@@ -130,7 +145,9 @@ elif pagina == "🎂 Aniversariantes do mês":
     mes_atual = hoje.month
     aniversariantes_mes = df[df["DATA NASCIMENTO"].dt.month == mes_atual]
 
-    st.title(f"🎂 Aniversariantes de {hoje.strftime('%B').capitalize()}")
+    mes_atual_en = hoje.strftime("%B")
+    mes_atual_pt = MESES_PT[mes_atual_en]
+    st.title(f"🎂 Aniversariantes de {mes_atual_pt}")
 
     if aniversariantes_mes.empty:
         st.info("Não há aniversariantes neste mês.")
