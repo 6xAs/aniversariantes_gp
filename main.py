@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
+import locale
+locale.setlocale(locale.LC_TIME, "pt_BR.utf8")
 
 st.set_page_config(page_title="Aniversariantes do GP", page_icon="🎉", layout="wide")
 
@@ -42,6 +44,7 @@ st.sidebar.title("Filtrar")
 pagina = st.sidebar.radio("Escolha uma opção:", [
     "✨ Aniversariante do dia",
     "🎊 Próximos aniversariantes",
+    "🎂 Aniversariantes do mês",
     "📋 Lista Completa",
 ])
 
@@ -55,7 +58,7 @@ st.markdown(
         border-radius: 15px;
         text-align: center;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 100px;
+        margin-bottom: 30px;
         transition: transform 0.2s ease-in-out;
     }
     .card:hover {
@@ -112,12 +115,40 @@ if pagina == "🎊 Próximos aniversariantes":
             st.markdown(
                 f"""
                 <div class="card">
-                    <img src="{row['AVATAR']}" border-radius: 10px; margin-right: 15px; border: 3px solid #000000; background-color: #ffffff; /width="170" style="border-radius: 22%;" />
+                    <img src="{row['AVATAR']}" border-radius: 10px; margin-right: 15px; 
+                         border: 3px solid #000000; background-color: #ffffff; width="170" 
+                         style="border-radius: 22%;" />
                     <div class="nome">{row['NOME']}</div>
                     <div class="data-aniversario">🎂 {row['PRÓXIMO ANIVERSÁRIO'].strftime('%d/%m')}</div>
                 </div>
                 """, unsafe_allow_html=True
             )
+
+# Página: Aniversariantes do mês
+elif pagina == "🎂 Aniversariantes do mês":
+    mes_atual = hoje.month
+    aniversariantes_mes = df[df["DATA NASCIMENTO"].dt.month == mes_atual]
+
+    st.title(f"🎂 Aniversariantes de {hoje.strftime('%B').capitalize()}")
+
+    if aniversariantes_mes.empty:
+        st.info("Não há aniversariantes neste mês.")
+    else:
+        for i in range(0, len(aniversariantes_mes), 3):
+            cols = st.columns(3)
+            for idx, (_, row) in enumerate(aniversariantes_mes.iloc[i:i+3].iterrows()):
+                with cols[idx]:
+                    st.markdown(
+                        f"""
+                        <div class="card">
+                            <img src="{row['AVATAR']}" border-radius: 10px; margin-right: 15px; 
+                                 border: 3px solid #000000; background-color: #ffffff; width="170" 
+                                 style="border-radius: 22%;" />
+                            <div class="nome">{row['NOME']}</div>
+                            <div class="data-aniversario">🎂 {row['DATA NASCIMENTO'].strftime('%d/%m')}</div>
+                        </div>
+                        """, unsafe_allow_html=True
+                    )
 
 # Página: Lista completa
 elif pagina == "📋 Lista Completa":
@@ -134,7 +165,7 @@ elif pagina == "📋 Lista Completa":
             """, unsafe_allow_html=True
         )
 
-# Página de aniversariante
+# Página de aniversariante do dia
 elif pagina == "✨ Aniversariante do dia":
     if not aniversariantes_hoje.empty:
         st.title("🎉 FELIZ ANIVERSÁRIO!")
@@ -230,5 +261,3 @@ elif pagina == "✨ Aniversariante do dia":
           """,
            unsafe_allow_html=True
         )
-        
-        
