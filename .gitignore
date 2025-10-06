@@ -1,0 +1,9 @@
+# pasta screts 
+screts/
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+.ENV/
